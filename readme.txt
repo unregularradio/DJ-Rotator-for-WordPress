@@ -26,7 +26,7 @@ http://1049thegump.com
 ######################################
 Change Log
 
-Version 0.0.2 – NOvember 18th 2011
+Version 0.0.2 – November 18th 2011
 - Added hooks
 - Added header class
 - Added image class
