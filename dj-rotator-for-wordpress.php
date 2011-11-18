@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: DJ Rotator for WordPress
-Plugin URI: http://gregrickaby.com/2011/11/dj-rotator-for-wordpress
-Description: Easily create a Jock Rotator to display which DJ is currently on-air. You can upload/delete jocks via the options panel. <strong>Display the Jock Rotator by using either the <code>jrwp();</code> template tag or a <code>[jrwp]</code> shortcode in your theme. </strong>
+Plugin URI: http://gregrickaby.com/go/dj-rotator-for-wordpress
+Description: Easily create a Deejay Rotator to display which personality is currently on-air. You can upload/delete deejays via the options panel. <strong>Display the DJ Rotator by using either the <code>djwp();</code> template tag or a <code>[djwp]</code> shortcode in your theme.</strong>
 Author: Greg Rickaby
 Version: 0.0.1
 Author URI: http://gregrickaby.com
-Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction. I love the GPL.
+Notes: Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction. I love open-source and the GPL.
 */
 
 
@@ -14,14 +14,14 @@ Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the ri
  * Defines the default variables that will be used throughout the plugin
  * @since 0.0.1
  */
-$jrwp_defaults = apply_filters( 'jrwp_defaults', array(
+$djwp_defaults = apply_filters( 'djwp_defaults', array(
 	'header_text' => 'On-Air Now',
 	'img_width' => 250,
 	'img_height' => 125,
-	'div' => 'jock-rotator',
-	'header_class' => 'jock-header',
-	'image_class' => 'jock-image',
-	'desc_class' => 'jock-desc',
+	'div' => 'dj-rotator',
+	'header_class' => 'dj-header',
+	'image_class' => 'dj-image',
+	'desc_class' => 'dj-desc',
 	'time_zone' => 'America/Chicago'
 ));
 
@@ -30,9 +30,9 @@ $jrwp_defaults = apply_filters( 'jrwp_defaults', array(
  * Pull the settings from the DB
  * @since 0.0.1
  */
-$jrwp_settings = get_option( 'jrwp_settings' );
-$jrwp_images = get_option( 'jrwp_images' );
-$jrwp_settings = wp_parse_args($jrwp_settings, $jrwp_defaults);
+$djwp_settings = get_option( 'djwp_settings' );
+$djwp_images = get_option( 'djwp_images' );
+$djwp_settings = wp_parse_args($djwp_settings, $djwp_defaults);
 
 
 /**
@@ -40,21 +40,21 @@ $jrwp_settings = wp_parse_args($jrwp_settings, $jrwp_defaults);
  * on the plugin page to "settings"
  * @since 0.0.1
  */
-add_action( 'admin_init', 'jrwp_register_settings' );
-function jrwp_register_settings() {
-	register_setting( 'jrwp_images', 'jrwp_images', 'jrwp_images_validate' );
-	register_setting( 'jrwp_settings', 'jrwp_settings', 'jrwp_settings_validate' );
+add_action( 'admin_init', 'djwp_register_settings' );
+function djwp_register_settings() {
+	register_setting( 'djwp_images', 'djwp_images', 'djwp_images_validate' );
+	register_setting( 'djwp_settings', 'djwp_settings', 'djwp_settings_validate' );
 }
 
-add_action( 'admin_menu', 'add_jrwp_menu' );
-function add_jrwp_menu() {
-		add_submenu_page( 'options-general.php', 'Jock Roator', 'Jock Rotator', 8, 'jock-rotator', 'jrwp_admin_page' );
+add_action( 'admin_menu', 'add_djwp_menu' );
+function add_djwp_menu() {
+		add_submenu_page( 'options-general.php', 'DJ Roator', 'DJ Rotator', 8, 'dj-rotator', 'djwp_admin_page' );
 }
 
-add_filter( 'plugin_action_links_' . plugin_basename(__FILE__) , 'jrwp_plugin_action_links' );
-function jrwp_plugin_action_links($links) {
-	$jrwp_settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=jock-rotator' ), __( 'Settings' ) );
-	array_unshift($links, $jrwp_settings_link);
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__) , 'djwp_plugin_action_links' );
+function djwp_plugin_action_links($links) {
+	$djwp_settings_link = sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=dj-rotator' ), __( 'Settings' ) );
+	array_unshift($links, $djwp_settings_link);
 	return $links;
 }
 
@@ -64,37 +64,36 @@ function jrwp_plugin_action_links($links) {
  * It calls functions that handle image uploads and image settings changes, as well as producing the visible page output.
  * @since 0.0.1
  */
-function jrwp_admin_page() {
+function djwp_admin_page() {
 	echo '<div class="wrap">';
 	
 		// handle image upload, if necessary
 		if($_REQUEST['action'] == 'wp_handle_upload')
-			jrwp_handle_upload();
+			djwp_handle_upload();
 		
 		// delete an image, if necessary
 		if(isset($_REQUEST['delete']))
-			jrwp_delete_upload($_REQUEST['delete']);
+			djwp_delete_upload($_REQUEST['delete']);
 		
 		// the image management form
-		jrwp_images_admin();
+		djwp_images_admin();
 		
 		// the settings management form
-		jrwp_settings_admin();
+		djwp_settings_admin();
 
 	echo '</div>';
 }
 
 
 /**
- * this section handles uploading images, addingthe image data to the database, deleting images,
- * and deleting image data from the database.
+ * this section handles uploading images, addingthe image data to the database, deleting images, and deleting image data from the database.
  * @since 0.0.1
  */
-function jrwp_handle_upload() {
-	global $jrwp_settings, $jrwp_images;
+function djwp_handle_upload() {
+	global $djwp_settings, $djwp_images;
 	
 	// upload the image
-	$upload = wp_handle_upload($_FILES['jrwp'], 0);
+	$upload = wp_handle_upload($_FILES['djwp'], 0);
 	
 	// extract the $upload array
 	extract($upload);
@@ -113,16 +112,16 @@ function jrwp_handle_upload() {
 	}
 	
 	// if the image doesn't meet the minimum width/height requirements ...
-	if($width < $jrwp_settings['img_width'] || $height < $jrwp_settings['img_height']) {
+	if($width < $djwp_settings['img_width'] || $height < $djwp_settings['img_height']) {
 		unlink($file); // delete the image
 		echo '<div class="error" id="message"><p>Sorry, but this image does not meet the minimum height/width requirements. Please upload another image</p></div>';
 		return;
 	}
 	
 	// if the image is larger than the width/height requirements, then scale it down.
-	if($width > $jrwp_settings['img_width'] || $height > $jrwp_settings['img_height']) {
+	if($width > $djwp_settings['img_width'] || $height > $djwp_settings['img_height']) {
 		//	resize the image
-		$resized = image_resize($file, $jrwp_settings['img_width'], $jrwp_settings['img_height'], true, 'resized');
+		$resized = image_resize($file, $djwp_settings['img_width'], $djwp_settings['img_height'], true, 'resized');
 		$resized_url = $upload_dir_url . basename($resized);
 		//	delete the original
 		unlink($file);
@@ -131,7 +130,7 @@ function jrwp_handle_upload() {
 	}
 	
 	// make the thumbnail
-	$thumb_height = round((100 * $jrwp_settings['img_height']) / $jrwp_settings['img_width']);
+	$thumb_height = round((100 * $djwp_settings['img_height']) / $djwp_settings['img_width']);
 	if(isset($upload['file'])) {
 		$thumbnail = image_resize($file, 100, $thumb_height, true, 'thumb');
 		$thumbnail_url = $upload_dir_url . basename($thumbnail);
@@ -141,7 +140,7 @@ function jrwp_handle_upload() {
 	$time = date('YmdHis');
 	
 	// add the image data to the array
-	$jrwp_images[$time] = array(
+	$djwp_images[$time] = array(
 		'id' => $time,
 		'file' => $file,
 		'file_url' => $url,
@@ -151,28 +150,28 @@ function jrwp_handle_upload() {
 	);
 	
 	// add the image information to the database
-	$jrwp_images['update'] = 'Added';
-	update_option('jrwp_images', $jrwp_images);
+	$djwp_images['update'] = 'Added';
+	update_option('djwp_images', $djwp_images);
 }
 
 // delete the image, and removes the image data from the db
-function jrwp_delete_upload($id) {
-	global $jrwp_images;
+function djwp_delete_upload($id) {
+	global $djwp_images;
 	
 	// if the ID passed to this function is invalid,
 	// halt the process, and don't try to delete.
-	if(!isset($jrwp_images[$id])) return;
+	if(!isset($djwp_images[$id])) return;
 	
 	// delete the image and thumbnail
-	unlink($jrwp_images[$id]['file']);
-	unlink($jrwp_images[$id]['thumbnail']);
+	unlink($djwp_images[$id]['file']);
+	unlink($djwp_images[$id]['thumbnail']);
 	
 	// indicate that the image was deleted
-	$jrwp_images['update'] = 'Deleted';
+	$djwp_images['update'] = 'Deleted';
 	
 	// remove the image data from the db
-	unset($jrwp_images[$id]);
-	update_option('jrwp_images', $jrwp_images);
+	unset($djwp_images[$id]);
+	update_option('djwp_images', $djwp_images);
 }
 
 
@@ -181,58 +180,60 @@ function jrwp_delete_upload($id) {
  * will display a notice, and reset the update option.
  * @since 0.0.1
  */
- 
-function jrwp_images_update_check() {
-	global $jrwp_images;
-	if($jrwp_images['update'] == 'Added' || $jrwp_images['update'] == 'Deleted' || $jrwp_images['update'] == 'Updated') {
-		echo '<div class="updated fade" id="message"><p>Jock(s) '.$jrwp_images['update'].' Successfully</p></div>';
-		unset($jrwp_images['update']);
-		update_option('jrwp_images', $jrwp_images);
+function djwp_images_update_check() {
+	global $djwp_images;
+	if($djwp_images['update'] == 'Added' || $djwp_images['update'] == 'Deleted' || $djwp_images['update'] == 'Updated') {
+		echo '<div class="updated fade" id="message"><p>DJ(s) '.$djwp_images['update'].' Successfully</p></div>';
+		unset($djwp_images['update']);
+		update_option('djwp_images', $djwp_images);
 	}
 }
 
 
-function jrwp_settings_update_check() {
-	global $jrwp_settings;
-	if(isset($jrwp_settings['update'])) {
-		echo '<div class="updated fade" id="message"><p>Jock Roator Settings <strong>'.$jrwp_settings['update'].'</strong></p></div>';
-		unset($jrwp_settings['update']);
-		update_option('jrwp_settings', $jrwp_settings);
+function djwp_settings_update_check() {
+	global $djwp_settings;
+	if(isset($djwp_settings['update'])) {
+		echo '<div class="updated fade" id="message"><p><strong>DJ Settings <strong>'.$djwp_settings['update'].'</strong></p></div>';
+		unset($djwp_settings['update']);
+		update_option('djwp_settings', $djwp_settings);
 	}
 }
 
 
 /**
- * these two functions display the front-end code on the admin page. it's mostly form markup.
+ * Display the dj image settings on the options page
  * @since 0.0.1
  */
-
-// display the images administration code
-function jrwp_images_admin() { ?>
-	<?php global $jrwp_images; ?>
-	<h2><?php _e( 'Jock Photos', 'jrwp' ); ?></h2>
+function djwp_images_admin() { ?>
+	<?php global $djwp_images; ?>
+	<h2><?php _e( 'DJ Images', 'djwp' ); ?></h2>
 	<table class="form-table">
 		<tr valign="top"><th scope="row">Upload a photo</th>
 			<td>
-			<form enctype="multipart/form-data" method="post" action="?page=jock-rotator">
+			<form enctype="multipart/form-data" method="post" action="?page=dj-rotator">
 				<input type="hidden" name="post_id" id="post_id" value="0" />
 				<input type="hidden" name="action" id="action" value="wp_handle_upload" />
 				
-				<label for="jrwp">Select a File: </label>
-				<input type="file" name="jrwp" id="jrwp" />
+				<label for="djwp">Select a File: </label>
+				<input type="file" name="djwp" id="djwp" />
 				<input type="submit" class="button-primary" name="html-upload" value="Upload" />
 			</form>
 			</td>
 		</tr>
-	</table><br />
+	</table>
 	
-    <h2><?php _e( 'Jock Information', 'jrwp' ); ?></h2>
-    <?php jrwp_images_update_check(); ?>
-	<?php if(!empty($jrwp_images)) : ?>
+    <h2><?php _e( 'DJ Information', 'djwp' ); ?></h2>
+    <?php djwp_images_update_check();
+	
+	// check to see if there are DJ's. If not display a quick message
+	if(empty($djwp_images)) : 
+    	echo '<div class="updated fade" id="message"><p><strong>There\'s nothing here yet. Try uploading an image of a DJ first.</strong></p></div>';
+    endif; ?>
+    
 	<table class="widefat fixed" cellspacing="0">
 		<thead>
 			<tr>
-				<th scope="col">Jock Photo</th>
+				<th scope="col">DJ Photo</th>
                 <th scope="col">Description</th>
 				<th scope="col">Photo Links To</th>
                 <th scope="col">Days On-Air</th>
@@ -244,7 +245,7 @@ function jrwp_images_admin() { ?>
 		
 		<tfoot>
 			<tr>
-				<th scope="col">Jock Picture</th>
+				<th scope="col">DJ Picture</th>
                 <th scope="col">Description</th>
 				<th scope="col">Photo Links To</th>
                 <th scope="col">Days On-Air</th>
@@ -257,24 +258,24 @@ function jrwp_images_admin() { ?>
 		<tbody>
 		
 		<form method="post" action="options.php">
-		<?php settings_fields( 'jrwp_images' ); ?>
-		<?php foreach((array)$jrwp_images as $image => $data) : ?>
+		<?php settings_fields( 'djwp_images' ); ?>
+		<?php foreach((array)$djwp_images as $image => $data) : ?>
 			<tr>
-            	<input type="hidden" name="jrwp_images[update]" value="Updated" />
-				<input type="hidden" name="jrwp_images[<?php echo $image; ?>][id]" value="<?php echo $data['id']; ?>" />
-				<input type="hidden" name="jrwp_images[<?php echo $image; ?>][file]" value="<?php echo $data['file']; ?>" />
-				<input type="hidden" name="jrwp_images[<?php echo $image; ?>][file_url]" value="<?php echo $data['file_url']; ?>" />
-				<input type="hidden" name="jrwp_images[<?php echo $image; ?>][thumbnail]" value="<?php echo $data['thumbnail']; ?>" />
-				<input type="hidden" name="jrwp_images[<?php echo $image; ?>][thumbnail_url]" value="<?php echo $data['thumbnail_url']; ?>" />
-                <input type="hidden" name="jrwp_images[<?php echo $image; ?>][desc]" value="<?php echo $data['desc']; ?>" />
-                <input type="hidden" name="jrwp_images[<?php echo $image; ?>][days]" value="<?php echo $data['days']; ?>" />
-                <input type="hidden" name="jrwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" />
-                <input type="hidden" name="jrwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" />
+            	<input type="hidden" name="djwp_images[update]" value="Updated" />
+				<input type="hidden" name="djwp_images[<?php echo $image; ?>][id]" value="<?php echo $data['id']; ?>" />
+				<input type="hidden" name="djwp_images[<?php echo $image; ?>][file]" value="<?php echo $data['file']; ?>" />
+				<input type="hidden" name="djwp_images[<?php echo $image; ?>][file_url]" value="<?php echo $data['file_url']; ?>" />
+				<input type="hidden" name="djwp_images[<?php echo $image; ?>][thumbnail]" value="<?php echo $data['thumbnail']; ?>" />
+				<input type="hidden" name="djwp_images[<?php echo $image; ?>][thumbnail_url]" value="<?php echo $data['thumbnail_url']; ?>" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][desc]" value="<?php echo $data['desc']; ?>" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][days]" value="<?php echo $data['days']; ?>" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" />
 				<th scope="row" class="column-slug"><img src="<?php echo $data['thumbnail_url']; ?>" /></th>
-                <td><textarea name="jrwp_images[<?php echo $image; ?>][desc]" cols="20" rows="3" /><?php echo $data['desc']; ?></textarea></td>
-				<td><input type="text" name="jrwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="25" /></td>
+                <td><textarea name="djwp_images[<?php echo $image; ?>][desc]" cols="20" rows="3" /><?php echo $data['desc']; ?></textarea></td>
+				<td><input type="text" name="djwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="25" /></td>
                 <td>
-                	<select style="height:65px;" name="jrwp_images[<?php echo $image; ?>][days][]" multiple="multiple" size="5">
+                	<select style="height:65px;" name="djwp_images[<?php echo $image; ?>][days][]" multiple="multiple" size="5">
 						<option value="0" <?php selected('0', $data['days']); ?>>Sunday</option>
 						<option value="1" <?php selected('1', $data['days']); ?>>Monday</option>
 						<option value="2" <?php selected('2', $data['days']); ?>>Tuesday</option>
@@ -284,95 +285,99 @@ function jrwp_images_admin() { ?>
 						<option value="6" <?php selected('6', $data['days']); ?>>Saturday</option>
 					</select>
             	</td>
-                <td><input type="text" name="jrwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" size="5" /></td>
-                <td><input type="text" name="jrwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" size="5" /></td>
-				<td class="column-slug"><input type="submit" class="button-primary" value="Update" /> <a href="?page=jock-rotator&amp;delete=<?php echo $image; ?>" class="button">Delete</a></td>
+                <td><input type="text" name="djwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" size="5" /></td>
+                <td><input type="text" name="djwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" size="5" /></td>
+				<td class="column-slug"><input type="submit" class="button-primary" value="Update" /> <a href="?page=dj-rotator&amp;delete=<?php echo $image; ?>" class="button">Delete</a></td>
 			</tr>
 		<?php endforeach; ?>
-		</form>
-		
+		</form>		
 		</tbody>
 	</table>
-	<?php endif; ?>
+
 
 <?php
 }
 
-// display the settings administration code
-function jrwp_settings_admin() { ?>
-	<h2><?php _e( 'Jock Rotator Settings', 'jock-rotator' ); ?></h2>
-    <?php jrwp_settings_update_check(); ?>
+
+/**
+ * Display the DJ settings on the options page
+ * @since 0.0.1
+ */
+function djwp_settings_admin() { ?>
+	<h2><?php _e( 'DJ Rotator Settings', 'djwp' ); ?></h2>
+    <?php djwp_settings_update_check(); ?>
 	<form method="post" action="options.php">
-	<?php settings_fields( 'jrwp_settings' ); ?>
-	<?php global $jrwp_settings; $options = $jrwp_settings; ?>
-	
+	<?php settings_fields( 'djwp_settings' ); ?>
+	<?php global $djwp_settings; $options = $djwp_settings; ?>
+
     <h3>Name</h3>
     <table class="form-table"> 
     	<tbody>         
         	<tr valign="top">
-            	<th scope="row"><?php _e( 'Module Name', 'jrwp' ); ?></th>
+            	<th scope="row"><?php _e( 'Module Name', 'djwp' ); ?></th>
 				<td>                
-                <input type="text" name="jrwp_settings[header_text]" value="<?php echo $options['header_text'] ?>" />
-                <p><span class="description"><?php _e( 'Give the module a name. Default: <code>On-Air Now</code>', 'jrwp' ); ?></span></p>
+                <input type="text" name="djwp_settings[header_text]" value="<?php echo $options['header_text'] ?>" />
+                <p><span class="description"><?php _e( 'Give the module a name. Default: <code>On-Air Now</code>', 'djwp' ); ?></span></p>
                 </td>
         </tr>		
-		<input type="hidden" name="jrwp_settings[update]" value="UPDATED" />	
+		<input type="hidden" name="djwp_settings[update]" value="UPDATED" />	
 	</table>
-    
+
     <h3>Photo Dimensions</h3>
     <table class="form-table">	
     	<tbody>
 			<tr valign="top">
-            	<th scope="row"><?php _e( 'The minimum photo dimensions that will be allowed to be uploaded', 'jrwp' ); ?></th>
+            	<th scope="row"><?php _e( 'The minimum photo dimensions that will be allowed to be uploaded', 'djwp' ); ?></th>
 				<td>
-                <label for="jrwp_settings[img_width]">Width </label><input type="text" name="jrwp_settings[img_width]" value="<?php echo $options['img_width'] ?>" class="small-text" />
-				<label for="jrwp_settings[img_height]">Height </label><input type="text" name="jrwp_settings[img_height]" value="<?php echo $options['img_height'] ?>" class="small-text" />
-                <p><span class="description"><?php _e( 'Large photos will be scaled both automatically and proportionally. Default: <code>250x125</code>', 'jrwp' ); ?></span></p>
+                <label for="djwp_settings[img_width]">Width </label><input type="text" name="djwp_settings[img_width]" value="<?php echo $options['img_width'] ?>" class="small-text" />
+				<label for="djwp_settings[img_height]">Height </label><input type="text" name="djwp_settings[img_height]" value="<?php echo $options['img_height'] ?>" class="small-text" />
+                <p><span class="description"><?php _e( 'Large photos will be scaled both automatically and proportionally. Default: <code>250x125</code>', 'djwp' ); ?></span></p>
 				</td>
         	</tr>
        </tbody>
 	</table>
-    
+
     <h3>CSS Options</h3>
     <table class="form-table">	
     	<tbody>
 			<tr valign="top">
-            	<th scope="row"><?php _e( 'Jock Rotator DIV ID', 'jrwp' ); ?></th>
+            	<th scope="row"><?php _e( 'Main DIV ID', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="jrwp_settings[div]" value="<?php echo $options['div'] ?>" />
-                    <p><span class="description"><?php _e( 'Set the CSS <code>ID</code> of the module. Default: <code>jock-rotator</code>', 'jrwp' ); ?></span></p>
+            		<input type="text" name="djwp_settings[div]" value="<?php echo $options['div'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>ID</code> of the module. Default: <code>dj-rotator</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
             <tr valign="top">
-            	<th scope="row"><?php _e( 'Jock Rotator Header Class', 'jrwp' ); ?></th>
+            	<th scope="row"><?php _e( 'Header Class', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="jrwp_settings[header_class]" value="<?php echo $options['header_class'] ?>" />
-                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the <code>&lt;h3&gt;</code>. Default: <code>jock-header</code>', 'jrwp' ); ?></span></p>
+            		<input type="text" name="djwp_settings[header_class]" value="<?php echo $options['header_class'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the <code>&lt;h3&gt;</code>. Default: <code>dj-header</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
 			<tr valign="top">
-            	<th scope="row"><?php _e( 'Jock Rotator Image Class', 'jrwp' ); ?></th>
+            	<th scope="row"><?php _e( 'Image Class', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="jrwp_settings[image_class]" value="<?php echo $options['image_class'] ?>" />
-                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the photo. Default: <code>jock-image</code>', 'jrwp' ); ?></span></p>
+            		<input type="text" name="djwp_settings[image_class]" value="<?php echo $options['image_class'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the photo. Default: <code>dj-image</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
             <tr valign="top">
-            	<th scope="row"><?php _e( 'Jock Rotator Description Class', 'jrwp' ); ?></th>
+            	<th scope="row"><?php _e( 'Description Class', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="jrwp_settings[desc_class]" value="<?php echo $options['desc_class'] ?>" />
-                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the description. Default: <code>jock-desc</code>', 'jrwp' ); ?></span></p>
+            		<input type="text" name="djwp_settings[desc_class]" value="<?php echo $options['desc_class'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the description. Default: <code>dj-desc</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
         </tbody>
     </table>
+
     <h3>Timezone</h3>
     <table class="form-table"> 
     	<tbody>         
         	<tr valign="top">
             	<th scope="row">Select your timezone</th>
 				<td>    
-                <select name="jrwp_settings[time_zone]">
+                <select name="djwp_settings[time_zone]">
 					<option value="Kwajalein" <?php selected('Kwajalein', $options['time_zone']); ?>>(GMT -12:00) Eniwetok, Kwajalein</option>
 					<option value="Pacific/Midway" <?php selected('Pacific/Midway', $options['time_zone']); ?>>(GMT -11:00) Midway Island, Samoa</option>
 					<option value="Pacific/Honolulu" <?php selected('Pacific/Honolulu', $options['time_zone']); ?>>(GMT -10:00) Hawaii</option>
@@ -408,10 +413,10 @@ function jrwp_settings_admin() { ?>
 					<option value="Pacific/Fiji" <?php selected('Pacific/Fiji', $options['time_zone']); ?>>(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
                     <option value="Pacific/Tongatapu" <?php selected('Pacific/Tongatapu', $options['time_zone']); ?>>(GMT +13:00) Tongatapu</option>
 				</select>            
-                <p><span class="description"><?php _e('This is required to ensure DJ\'s will show up according to your timezone. Default: <code>Central Time (US &amp; Canada)</code>', 'jrwp'); ?></span></p>
+                <p><span class="description"><?php _e('This is required to ensure Deejay\'s will show up according to your timezone. Default: <code>Central Time (US &amp; Canada)</code>', 'djwp'); ?></span></p>
                 </td>
         </tr>		
-		<input type="hidden" name="jrwp_settings[update]" value="UPDATED" />	
+		<input type="hidden" name="djwp_settings[update]" value="UPDATED" />	
 	</table>
 	<p class="submit">
 	<input type="submit" class="button-primary" value="<?php _e('Save Settings') ?>" />
@@ -419,31 +424,31 @@ function jrwp_settings_admin() { ?>
 	
 	<!-- The Reset Option -->
 	<form method="post" action="options.php">
-	<?php settings_fields( 'jrwp_settings '); ?>
-	<?php global $jrwp_defaults; // use the defaults ?>
-	<?php foreach((array)$jrwp_defaults as $key => $value) : ?>
-	<input type="hidden" name="jrwp_settings[<?php echo $key; ?>]" value="<?php echo $value; ?>" />
+	<?php settings_fields( 'djwp_settings '); ?>
+	<?php global $djwp_defaults; // use the defaults ?>
+	<?php foreach((array)$djwp_defaults as $key => $value) : ?>
+	<input type="hidden" name="djwp_settings[<?php echo $key; ?>]" value="<?php echo $value; ?>" />
 	<?php endforeach; ?>
-	<input type="hidden" name="jrwp_settings[update]" value="RESET" />
-	<input type="submit"  class="button-highlighted" value="<?php _e('Reset Settings') ?>" />
+	<input type="hidden" name="djwp_settings[update]" value="RESET" />
+	<input type="submit"  class="button-highlighted" value="<?php _e( 'Reset Settings' ) ?>" />
 	</form>
 	<!-- End Reset Option -->
 	</p>
     &nbsp; &nbsp;
-    <p><span class="description"><?php _e('Blah Blah Blah a brief FAQ', 'jrwp'); ?></span></p>
+    <p><span class="description"><?php _e('Blah Blah Blah a brief FAQ', 'djwp'); ?></span></p>
 
 <?php
 }
 
 
 /**
- * these two functions sanitize the data before it gets stored in the database via options.php
+ * These two functions sanitize the data before it gets stored in the database via options.php
  * @since 0.0.1
  *
  */
 
 // sanitizes our settings data for storage
-function jrwp_settings_validate($input) {
+function djwp_settings_validate($input) {
 	$input['header_text'] = wp_filter_nohtml_kses($input['header_text']);
 	$input['img_width'] = intval($input['img_width']);
 	$input['img_height'] = intval($input['img_height']);
@@ -454,8 +459,9 @@ function jrwp_settings_validate($input) {
 	
 	return $input;
 }
+
 // sanitizes our image data for storage
-function jrwp_images_validate($input) {
+function djwp_images_validate($input) {
 	foreach((array)$input as $key => $value) {
 		if($key != 'update') {
 			$input[$key]['file_url'] = clean_url($value['file_url']);
@@ -468,84 +474,86 @@ function jrwp_images_validate($input) {
 	return $input;
 }
 
+
 /**
  * Generates all hook wrappers
- * @since 0.0.1
+ * @since 0.0.2
  *
  */
-function jrwp_before_header() {
-	do_action('jrwp_before_header');
+function djwp_before_header() {
+	do_action('djwp_before_header');
 }
 
-function jrwp_after_header() {
-	do_action('jrwp_after_header');
+function djwp_after_header() {
+	do_action('djwp_after_header');
 }
 
-function jrwp_before_image() {
-	do_action('jrwp_before_image');
+function djwp_before_image() {
+	do_action('djwp_before_image');
 }
 
-function jrwp_after_image() {
-	do_action('jrwp_after_image');
+function djwp_after_image() {
+	do_action('djwp_after_image');
 }
 
-function jrwp_before_description() {
-	do_action('jrwp_before_description');
+function djwp_before_description() {
+	do_action('djwp_before_description');
 }
 
-function jrwp_after_description() {
-	do_action('jrwp_after_description');
+function djwp_after_description() {
+	do_action('djwp_after_description');
 }
 
 
 /**
  * Generates the <h3>MODULE NAME</h3> area 
- * @since 0.0.1
+ * @since 0.0.2
  *
  */
-function jrwp_header() {
-	global $jrwp_settings;
-	jrwp_before_header();
-		echo "\t\t" .'<h3 class="'.$jrwp_settings['header_class'].'">'.$jrwp_settings['header_text'].'</h3>' . "\n"; 
-	jrwp_after_header();
+function djwp_header() {
+	global $djwp_settings;
+	djwp_before_header();
+		echo "\t\t" .'<h3 class="'.$djwp_settings['header_class'].'">'.$djwp_settings['header_text'].'</h3>' . "\n"; 
+	djwp_after_header();
 }
 
 
 /**
- * Generates the jock image
- * @since 0.0.1
+ * Generates the dj image
+ * @since 0.0.2
  *
  */
-function jrwp_image() {
-	global $jrwp_settings, $jrwp_images;
+function djwp_image() {
+	global $djwp_settings, $djwp_images;
 	
 	// set the timezone
 	if(function_exists('date_default_timezone_set'))
-		date_default_timezone_set($jrwp_settings['time_zone']); 
+		date_default_timezone_set($djwp_settings['time_zone']); 
 	
 	// get current server time
 	$dae = date( 'w' );
 	$now = date( 'Hi' ); 
 	
-	jrwp_before_image();
-		foreach((array)$jrwp_images as $image => $data) {
+	djwp_before_image();
+		foreach((array)$djwp_images as $image => $data) {
 			if($data['days'] == $dae && $data['start_time'] <= $now && $data['end_time'] >= $now)
-				echo "\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$jrwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$jrwp_settings['img_width'].'" height="'.$jrwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+				echo "\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
 		
 		}
-	jrwp_after_image();
+	djwp_after_image();
 }
 
+
 /**
- * Generates the jock description
- * @since 0.0.1
+ * Generates the dj description
+ * @since 0.0.2
  *
  */
-function jrwp_description() {
-	global $jrwp_settings, $jrwp_images;
-	jrwp_before_description();
-		echo "\t\t\t" .'<p class="'.$jrwp_settings['desc_class'].'">'.$jrwp_images['desc'].'</p>' . "\n";
-	jrwp_after_description();
+function djwp_description() {
+	global $djwp_settings, $djwp_images;
+	djwp_before_description();
+		echo "\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$djwp_images['desc'].'</p>' . "\n";
+	djwp_after_description();
 	
 }
 
@@ -555,19 +563,24 @@ function jrwp_description() {
  * @since 0.0.1
  *
  */
-function jrwp($args = array(), $content = null) {
-	global $jrwp_settings;
-	echo "\t" .'<div id="'.$jrwp_settings['div'].'">' . "\n";
-		jrwp_header();
-		jrwp_image();
-		jrwp_description();
+function djwp($args = array(), $content = null) {
+	global $djwp_settings;
+	echo "\t" .'<div id="'.$djwp_settings['div'].'">' . "\n";
+		djwp_header();
+		djwp_image();
+		djwp_description();
 	echo "\t" .'</div>' . "\n";
 }
 
-// create the shortcode [jrwp]
-add_shortcode( 'jrwp', 'jrwp_shortcode' );
-function jrwp_shortcode($atts) {		
+
+/**
+ * Create the shortcode [djwp]
+ * @since 0.0.1
+ *
+ */
+add_shortcode( 'djwp', 'djwp_shortcode' );
+function djwp_shortcode($atts) {		
 	ob_start();
-		jrwp();
+		djwp();
 	return ob_get_clean();			
 }
