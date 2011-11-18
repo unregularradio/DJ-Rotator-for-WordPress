@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: Jock Rotator for WordPress
-Plugin URI: http://gregrickaby.com/2011/11/jock-rotator-for-wordpress
+Plugin Name: DJ Rotator for WordPress
+Plugin URI: http://gregrickaby.com/2011/11/dj-rotator-for-wordpress
 Description: Easily create a Jock Rotator to display which DJ is currently on-air. You can upload/delete jocks via the options panel. <strong>Display the Jock Rotator by using either the <code>jrwp();</code> template tag or a <code>[jrwp]</code> shortcode in your theme. </strong>
 Author: Greg Rickaby
 Version: 0.0.1
@@ -15,10 +15,14 @@ Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the ri
  * @since 0.0.1
  */
 $jrwp_defaults = apply_filters( 'jrwp_defaults', array(
+	'header_text' => 'On-Air Now',
 	'img_width' => 250,
-	'img_height' => 150,
+	'img_height' => 125,
 	'div' => 'jock-rotator',
-	'header_text' => 'On-Air Now'
+	'header_class' => 'jock-header',
+	'image_class' => 'jock-image',
+	'desc_class' => 'jock-desc',
+	'time_zone' => 'America/Chicago'
 ));
 
 
@@ -270,7 +274,7 @@ function jrwp_images_admin() { ?>
                 <td><textarea name="jrwp_images[<?php echo $image; ?>][desc]" cols="20" rows="3" /><?php echo $data['desc']; ?></textarea></td>
 				<td><input type="text" name="jrwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="25" /></td>
                 <td>
-                	<select name="jrwp_images[<?php echo $image; ?>][days]" size="5" multiple style="height:65px;">
+                	<select style="height:65px;" name="jrwp_images[<?php echo $image; ?>][days][]" multiple="multiple" size="5">
 						<option value="0" <?php selected('0', $data['days']); ?>>Sunday</option>
 						<option value="1" <?php selected('1', $data['days']); ?>>Monday</option>
 						<option value="2" <?php selected('2', $data['days']); ?>>Tuesday</option>
@@ -296,45 +300,115 @@ function jrwp_images_admin() { ?>
 
 // display the settings administration code
 function jrwp_settings_admin() { ?>
-	<h2><?php _e('Jock Rotator Settings', 'jock-rotator'); ?></h2>
+	<h2><?php _e( 'Jock Rotator Settings', 'jock-rotator' ); ?></h2>
     <?php jrwp_settings_update_check(); ?>
 	<form method="post" action="options.php">
-	<?php settings_fields('jrwp_settings'); ?>
+	<?php settings_fields( 'jrwp_settings' ); ?>
 	<?php global $jrwp_settings; $options = $jrwp_settings; ?>
 	
-    <h3>Photo Dimensions</h3>
-    <table class="form-table">	
-    	<tbody>
-			<tr valign="top">
-            	<th scope="row">The sizes listed determine the minimum dimensions in pixels.</th>
-				<td>
-                <label for="jrwp_settings[img_width]">Width </label><input type="text" name="jrwp_settings[img_width]" value="<?php echo $options['img_width'] ?>" class="small-text" />
-				<label for="jrwp_settings[img_height]">Height </label><input type="text" name="jrwp_settings[img_height]" value="<?php echo $options['img_height'] ?>" class="small-text" />
-                <p><span class="description">Large photos will be scaled both automatically and proportionally</span></p>
-				</td>
-        	</tr>
-       </tbody>
-	</table>
-    <h3>CSS Options</h3>
-    <table class="form-table">	
-    	<tbody>
-			<tr valign="top">
-            	<th scope="row">Jock Rotator DIV ID</th>
-				<td>            		
-            		<input type="text" name="jrwp_settings[div]" value="<?php echo $options['div'] ?>" />
-                    <p><span class="description">Set the CSS <code>ID</code> of the module for CSS customization</span></p>
-                </td>
-        	</tr>
-        </tbody>
-    </table>
     <h3>Name</h3>
     <table class="form-table"> 
     	<tbody>         
         	<tr valign="top">
-            	<th scope="row">Module Name</th>
+            	<th scope="row"><?php _e( 'Module Name', 'jrwp' ); ?></th>
 				<td>                
                 <input type="text" name="jrwp_settings[header_text]" value="<?php echo $options['header_text'] ?>" />
-                <p><span class="description"><?php _e('Give the module a name', 'jrwp'); ?></span></p>
+                <p><span class="description"><?php _e( 'Give the module a name. Default: <code>On-Air Now</code>', 'jrwp' ); ?></span></p>
+                </td>
+        </tr>		
+		<input type="hidden" name="jrwp_settings[update]" value="UPDATED" />	
+	</table>
+    
+    <h3>Photo Dimensions</h3>
+    <table class="form-table">	
+    	<tbody>
+			<tr valign="top">
+            	<th scope="row"><?php _e( 'The minimum photo dimensions that will be allowed to be uploaded', 'jrwp' ); ?></th>
+				<td>
+                <label for="jrwp_settings[img_width]">Width </label><input type="text" name="jrwp_settings[img_width]" value="<?php echo $options['img_width'] ?>" class="small-text" />
+				<label for="jrwp_settings[img_height]">Height </label><input type="text" name="jrwp_settings[img_height]" value="<?php echo $options['img_height'] ?>" class="small-text" />
+                <p><span class="description"><?php _e( 'Large photos will be scaled both automatically and proportionally. Default: <code>250x125</code>', 'jrwp' ); ?></span></p>
+				</td>
+        	</tr>
+       </tbody>
+	</table>
+    
+    <h3>CSS Options</h3>
+    <table class="form-table">	
+    	<tbody>
+			<tr valign="top">
+            	<th scope="row"><?php _e( 'Jock Rotator DIV ID', 'jrwp' ); ?></th>
+				<td>            		
+            		<input type="text" name="jrwp_settings[div]" value="<?php echo $options['div'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>ID</code> of the module. Default: <code>jock-rotator</code>', 'jrwp' ); ?></span></p>
+                </td>
+        	</tr>
+            <tr valign="top">
+            	<th scope="row"><?php _e( 'Jock Rotator Header Class', 'jrwp' ); ?></th>
+				<td>            		
+            		<input type="text" name="jrwp_settings[header_class]" value="<?php echo $options['header_class'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the <code>&lt;h3&gt;</code>. Default: <code>jock-header</code>', 'jrwp' ); ?></span></p>
+                </td>
+        	</tr>
+			<tr valign="top">
+            	<th scope="row"><?php _e( 'Jock Rotator Image Class', 'jrwp' ); ?></th>
+				<td>            		
+            		<input type="text" name="jrwp_settings[image_class]" value="<?php echo $options['image_class'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the photo. Default: <code>jock-image</code>', 'jrwp' ); ?></span></p>
+                </td>
+        	</tr>
+            <tr valign="top">
+            	<th scope="row"><?php _e( 'Jock Rotator Description Class', 'jrwp' ); ?></th>
+				<td>            		
+            		<input type="text" name="jrwp_settings[desc_class]" value="<?php echo $options['desc_class'] ?>" />
+                    <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the description. Default: <code>jock-desc</code>', 'jrwp' ); ?></span></p>
+                </td>
+        	</tr>
+        </tbody>
+    </table>
+    <h3>Timezone</h3>
+    <table class="form-table"> 
+    	<tbody>         
+        	<tr valign="top">
+            	<th scope="row">Select your timezone</th>
+				<td>    
+                <select name="jrwp_settings[time_zone]">
+					<option value="Kwajalein" <?php selected('Kwajalein', $options['time_zone']); ?>>(GMT -12:00) Eniwetok, Kwajalein</option>
+					<option value="Pacific/Midway" <?php selected('Pacific/Midway', $options['time_zone']); ?>>(GMT -11:00) Midway Island, Samoa</option>
+					<option value="Pacific/Honolulu" <?php selected('Pacific/Honolulu', $options['time_zone']); ?>>(GMT -10:00) Hawaii</option>
+					<option value="America/Anchorage" <?php selected('America/Anchorage', $options['time_zone']); ?>>(GMT -9:00) Alaska</option>
+					<option value="America/Los_Angeles" <?php selected('America/Los_Angeles', $options['time_zone']); ?>>(GMT -8:00) Pacific Time (US &amp; Canada)</option>
+					<option value="America/Denver" <?php selected('America/Denver', $options['time_zone']); ?>>(GMT -7:00) Mountain Time (US &amp; Canada)</option>
+					<option value="America/Chicago" <?php selected('America/Chicago', $options['time_zone']); ?>>(GMT -6:00) Central Time (US &amp; Canada), Mexico City</option>
+					<option value="America/New_York" <?php selected('America/New_York', $options['time_zone']); ?>>(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
+                    <option value="America/Caracas" <?php selected('America/Caracas', $options['time_zone']); ?>>(GMT -4:30) Caracas</option>
+					<option value="America/Halifax" <?php selected('America/Halifax', $options['time_zone']); ?>>(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
+					<option value="America/St_Johns" <?php selected('America/St_Johns', $options['time_zone']); ?>>(GMT -3:30) Newfoundland, St. Johns</option>
+					<option value="America/Argentina/Buenos_Aires" <?php selected('America/Argentina/Buenos_Aires', $options['time_zone']); ?>>(GMT -3:00) Brazil, Buenos Aires, Georgetown</option>
+					<option value="Atlantic/South_Georgia" <?php selected('Atlantic/South_Georgia', $options['time_zone']); ?>>(GMT -2:00) Mid-Atlantic</option>
+					<option value="Atlantic/Azores" <?php selected('Atlantic/Azores', $options['time_zone']); ?>>(GMT -1:00) Azores, Cape Verde Islands</option>
+					<option value="Europe/Dublin" <?php selected('Europe/Dublin', $options['time_zone']); ?>>(GMT) Western Europe Time, London, Lisbon, Casablanca</option>
+					<option value="Europe/Belgrade" <?php selected('Europe/Belgrade', $options['time_zone']); ?>>(GMT +1:00) Brussels, Copenhagen, Madrid, Paris</option>
+					<option value="Europe/Minsk" <?php selected('Europe/Minsk', $options['time_zone']); ?>>(GMT +2:00) Kaliningrad, South Africa</option>
+					<option value="Asia/Kuwait" <?php selected('Asia/Kuwait', $options['time_zone']); ?>>(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
+					<option value="Asia/Tehran" <?php selected('Asia/Tehran', $options['time_zone']); ?>>(GMT +3:30) Tehran</option>
+					<option value="Asia/Muscat" <?php selected('Asia/Muscat', $options['time_zone']); ?>>(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
+					<option value="Asia/Kubal" <?php selected('Asia/Kubal', $options['time_zone']); ?>>(GMT +4:30) Kabul</option>
+					<option value="Asia/Yekaterinburg" <?php selected('Asia/Yekaterinburg', $options['time_zone']); ?>>(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+					<option value="Asia/Kolkata" <?php selected('Asia/Kolkata', $options['time_zone']); ?>>(GMT +5:30) Bombay, Calcutta, Madras, New Delhi</option>
+					<option value="Asia/Katmandu" <?php selected('Asia/Katmandu', $options['time_zone']); ?>>(GMT +5:45) Kathmandu</option>
+					<option value="Asia/Dhaka" <?php selected('Asia/Dhaka', $options['time_zone']); ?>>(GMT +6:00) Almaty, Dhaka, Colombo</option>
+                    <option value="Asia/Rangoon" <?php selected('Asia/Rangoon', $options['time_zone']); ?>>(GMT +6:30) Rangoon</option>
+					<option value="Asia/Krasnoyarsk" <?php selected('Asia/Krasnoyarsk', $options['time_zone']); ?>>(GMT +7:00) Bangkok, Hanoi, Jakarta</option>
+					<option value="Asia/Brunei" <?php selected('Asia/Brunei', $options['time_zone']); ?>>(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</option>
+					<option value="Asia/Seoul" <?php selected('Asia/Seoul', $options['time_zone']); ?>>(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
+					<option value="Australia/Darwin" <?php selected('Australia/Darwin', $options['time_zone']); ?>>(GMT +9:30) Adelaide, Darwin</option>
+					<option value="Australia/Canberra" <?php selected('Australia/Canberra', $options['time_zone']); ?>>(GMT +10:00) Eastern Australia, Guam, Vladivostok</option>
+					<option value="Asia/Magadan" <?php selected('Asia/Magadan', $options['time_zone']); ?>>(GMT +11:00) Magadan, Solomon Islands, New Caledonia</option>
+					<option value="Pacific/Fiji" <?php selected('Pacific/Fiji', $options['time_zone']); ?>>(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+                    <option value="Pacific/Tongatapu" <?php selected('Pacific/Tongatapu', $options['time_zone']); ?>>(GMT +13:00) Tongatapu</option>
+				</select>            
+                <p><span class="description"><?php _e('This is required to ensure DJ\'s will show up according to your timezone. Default: <code>Central Time (US &amp; Canada)</code>', 'jrwp'); ?></span></p>
                 </td>
         </tr>		
 		<input type="hidden" name="jrwp_settings[update]" value="UPDATED" />	
@@ -345,7 +419,7 @@ function jrwp_settings_admin() { ?>
 	
 	<!-- The Reset Option -->
 	<form method="post" action="options.php">
-	<?php settings_fields('jrwp_settings'); ?>
+	<?php settings_fields( 'jrwp_settings '); ?>
 	<?php global $jrwp_defaults; // use the defaults ?>
 	<?php foreach((array)$jrwp_defaults as $key => $value) : ?>
 	<input type="hidden" name="jrwp_settings[<?php echo $key; ?>]" value="<?php echo $value; ?>" />
@@ -355,6 +429,8 @@ function jrwp_settings_admin() { ?>
 	</form>
 	<!-- End Reset Option -->
 	</p>
+    &nbsp; &nbsp;
+    <p><span class="description"><?php _e('Blah Blah Blah a brief FAQ', 'jrwp'); ?></span></p>
 
 <?php
 }
@@ -368,11 +444,13 @@ function jrwp_settings_admin() { ?>
 
 // sanitizes our settings data for storage
 function jrwp_settings_validate($input) {
-	$input['rotate'] = ($input['rotate'] == 1 ? 1 : 0);
-	$input['effect'] = wp_filter_nohtml_kses($input['effect']);
+	$input['header_text'] = wp_filter_nohtml_kses($input['header_text']);
 	$input['img_width'] = intval($input['img_width']);
 	$input['img_height'] = intval($input['img_height']);
 	$input['div'] = wp_filter_nohtml_kses($input['div']);
+	$input['header_class'] = wp_filter_nohtml_kses($input['header_class']);
+	$input['image_class'] = wp_filter_nohtml_kses($input['image_class']);
+	$input['desc_class'] = wp_filter_nohtml_kses($input['desc_class']);
 	
 	return $input;
 }
@@ -390,52 +468,106 @@ function jrwp_images_validate($input) {
 	return $input;
 }
 
-
 /**
- * Generates all the code that is displayed in the WP Theme
+ * Generates all hook wrappers
  * @since 0.0.1
  *
  */
-function jrwp1($args = array(), $content = null) {
-	global $jrwp_settings, $jrwp_images;
-	
-	$newline = "\n"; // line break
-	
-	echo '<div id="'.$jrwp_settings['div'].'">'.$newline;
-	
-	foreach((array)$jrwp_images as $image => $data) {
-		
-		echo '<h4 class="jock-header">'.$jrwp_settings['header_text'].'</h4>'.$newline;
-		
-		if($data['image_links_to'])
-		echo '<a href="'.$data['image_links_to'].'">';
-		
-		echo '<img src="'.$data['file_url'].'" width="'.$jrwp_settings['img_width'].'" height="'.$jrwp_settings['img_height'].'" class="'.$data['id'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /><p class="jock-desc">'.$data['desc'].'</p>';
-		
-		if($data['image_links_to'])
-		echo '</a>';
-		
-		echo $newline;
-	}
-	
-	echo '			</div>'.$newline;
+function jrwp_before_header() {
+	do_action('jrwp_before_header');
 }
 
-// create the template tag jrwp(); and shortcode [jrwp]
+function jrwp_after_header() {
+	do_action('jrwp_after_header');
+}
+
+function jrwp_before_image() {
+	do_action('jrwp_before_image');
+}
+
+function jrwp_after_image() {
+	do_action('jrwp_after_image');
+}
+
+function jrwp_before_description() {
+	do_action('jrwp_before_description');
+}
+
+function jrwp_after_description() {
+	do_action('jrwp_after_description');
+}
+
+
+/**
+ * Generates the <h3>MODULE NAME</h3> area 
+ * @since 0.0.1
+ *
+ */
+function jrwp_header() {
+	global $jrwp_settings;
+	jrwp_before_header();
+		echo "\t\t" .'<h3 class="'.$jrwp_settings['header_class'].'">'.$jrwp_settings['header_text'].'</h3>' . "\n"; 
+	jrwp_after_header();
+}
+
+
+/**
+ * Generates the jock image
+ * @since 0.0.1
+ *
+ */
+function jrwp_image() {
+	global $jrwp_settings, $jrwp_images;
+	
+	// set the timezone
+	if(function_exists('date_default_timezone_set'))
+		date_default_timezone_set($jrwp_settings['time_zone']); 
+	
+	// get current server time
+	$dae = date( 'w' );
+	$now = date( 'Hi' ); 
+	
+	jrwp_before_image();
+		foreach((array)$jrwp_images as $image => $data) {
+			if($data['days'] == $dae && $data['start_time'] <= $now && $data['end_time'] >= $now)
+				echo "\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$jrwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$jrwp_settings['img_width'].'" height="'.$jrwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+		
+		}
+	jrwp_after_image();
+}
+
+/**
+ * Generates the jock description
+ * @since 0.0.1
+ *
+ */
+function jrwp_description() {
+	global $jrwp_settings, $jrwp_images;
+	jrwp_before_description();
+		echo "\t\t\t" .'<p class="'.$jrwp_settings['desc_class'].'">'.$jrwp_images['desc'].'</p>' . "\n";
+	jrwp_after_description();
+	
+}
+
+
+/**
+ * Mash it all together and form our primary function
+ * @since 0.0.1
+ *
+ */
+function jrwp($args = array(), $content = null) {
+	global $jrwp_settings;
+	echo "\t" .'<div id="'.$jrwp_settings['div'].'">' . "\n";
+		jrwp_header();
+		jrwp_image();
+		jrwp_description();
+	echo "\t" .'</div>' . "\n";
+}
+
+// create the shortcode [jrwp]
 add_shortcode( 'jrwp', 'jrwp_shortcode' );
 function jrwp_shortcode($atts) {		
 	ob_start();
 		jrwp();
 	return ob_get_clean();			
 }
-
-// FUTURE USE
-add_action( 'wp_footer', 'jrwp_args', 99 );
-function jrwp_args() {
-	global $jrwp_settings; ?>
-
-<?php if($jrwp_settings['rotate']) : ?>
-	<!-- DO SOMETHING -->
-<?php endif; ?>
-
-<?php }
