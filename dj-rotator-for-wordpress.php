@@ -183,7 +183,7 @@ function djwp_delete_upload($id) {
 function djwp_images_update_check() {
 	global $djwp_images;
 	if($djwp_images['update'] == 'Added' || $djwp_images['update'] == 'Deleted' || $djwp_images['update'] == 'Updated') {
-		echo '<div class="updated fade" id="message"><p>DJ(s) '.$djwp_images['update'].' Successfully</p></div>';
+		echo '<div class="updated fade" id="message"><p>DJ Information '.$djwp_images['update'].' Successfully</p></div>';
 		unset($djwp_images['update']);
 		update_option('djwp_images', $djwp_images);
 	}
@@ -201,7 +201,7 @@ function djwp_settings_update_check() {
 
 
 /**
- * Display the dj image settings on the options page
+ * Display the DJ image settings on the options page
  * @since 0.0.1
  */
 function djwp_images_admin() { ?>
@@ -233,9 +233,9 @@ function djwp_images_admin() { ?>
 	<table class="widefat fixed" cellspacing="0">
 		<thead>
 			<tr>
-				<th scope="col">DJ Photo</th>
+				<th scope="col">DJ Image</th>
                 <th scope="col">Description</th>
-				<th scope="col">Photo Links To</th>
+				<th scope="col">Image Links To</th>
                 <th scope="col">Days On-Air</th>
                 <th scope="col">Start Time</th>
                 <th scope="col">End Time</th>
@@ -245,9 +245,9 @@ function djwp_images_admin() { ?>
 		
 		<tfoot>
 			<tr>
-				<th scope="col">DJ Picture</th>
+				<th scope="col">DJ Image</th>
                 <th scope="col">Description</th>
-				<th scope="col">Photo Links To</th>
+				<th scope="col">Image Links To</th>
                 <th scope="col">Days On-Air</th>
                 <th scope="col">Start Time</th>
                 <th scope="col">End Time</th>
@@ -268,25 +268,34 @@ function djwp_images_admin() { ?>
 				<input type="hidden" name="djwp_images[<?php echo $image; ?>][thumbnail]" value="<?php echo $data['thumbnail']; ?>" />
 				<input type="hidden" name="djwp_images[<?php echo $image; ?>][thumbnail_url]" value="<?php echo $data['thumbnail_url']; ?>" />
                 <input type="hidden" name="djwp_images[<?php echo $image; ?>][desc]" value="<?php echo $data['desc']; ?>" />
-                <input type="hidden" name="djwp_images[<?php echo $image; ?>][days]" value="<?php echo $data['days']; ?>" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][monday]" value="0" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][tuesday]" value="0" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][wednesday]" value="0" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][thursday]" value="0" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][friday]" value="0" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][saturday]" value="0" />
+                <input type="hidden" name="djwp_images[<?php echo $image; ?>][sunday]" value="0" />
                 <input type="hidden" name="djwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" />
                 <input type="hidden" name="djwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" />
-				<th scope="row" class="column-slug"><img src="<?php echo $data['thumbnail_url']; ?>" /></th>
-                <td><textarea name="djwp_images[<?php echo $image; ?>][desc]" cols="20" rows="3" /><?php echo $data['desc']; ?></textarea></td>
-				<td><input type="text" name="djwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="25" /></td>
-                <td>
-                	<select style="height:65px;" name="djwp_images[<?php echo $image; ?>][days][]" multiple="multiple" size="5">
-						<option value="0" <?php selected('0', $data['days']); ?>>Sunday</option>
-						<option value="1" <?php selected('1', $data['days']); ?>>Monday</option>
-						<option value="2" <?php selected('2', $data['days']); ?>>Tuesday</option>
-						<option value="3" <?php selected('3', $data['days']); ?>>Wednesday</option>
-						<option value="4" <?php selected('4', $data['days']); ?>>Thursday</option>
-						<option value="5" <?php selected('5', $data['days']); ?>>Friday</option>
-						<option value="6" <?php selected('6', $data['days']); ?>>Saturday</option>
-					</select>
-            	</td>
-                <td><input type="text" name="djwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" size="5" /></td>
-                <td><input type="text" name="djwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" size="5" /></td>
+				<td class="column-slug"><img src="<?php echo $data['file_url']; ?>" width="200" height="100" /></td>
+                <td><textarea name="djwp_images[<?php echo $image; ?>][desc]"rows="5" cols="20" class="regular-text" /><?php echo $data['desc']; ?></textarea>
+                <p><span class="description"><?php _e( 'Neal Boortz 9a-12p', 'djwp' ); ?></span></p></td>
+				<td><input type="text" name="djwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="7" /><p><span class="description"><?php _e( 'http://www.boortz.com', 'djwp' ); ?></span></p> </td>
+                <td>                
+                <input name="djwp_images[<?php echo $image; ?>][monday]" type="checkbox" value="Mon" <?php checked('Mon', $data['monday']); ?> /> <label for="djwp_images[monday]">Monday<br />
+                <input name="djwp_images[<?php echo $image; ?>][tuesday]" type="checkbox" value="Tue" <?php checked('Tue', $data['tuesday']); ?> /> <label for="djwp_images[tuesday]">Tuesday<br />
+                <input name="djwp_images[<?php echo $image; ?>][wednesday]" type="checkbox" value="Wed" <?php checked('Wed', $data['wednesday']); ?> /> <label for="djwp_images[wednesday]">Wednesday<br />
+                <input name="djwp_images[<?php echo $image; ?>][thursday]" type="checkbox" value="Thu" <?php checked('Thu', $data['thursday']); ?> /> <label for="djwp_images[thursday]">Thursday<br />
+                <input name="djwp_images[<?php echo $image; ?>][friday]" type="checkbox" value="Fri" <?php checked('Fri', $data['friday']); ?> /> <label for="djwp_images[friday]">Friday<br />
+                <input name="djwp_images[<?php echo $image; ?>][saturday]" type="checkbox" value="Sat" <?php checked('Sat', $data['saturday']); ?> /> <label for="djwp_images[saturday]">Saturday<br />
+                <input name="djwp_images[<?php echo $image; ?>][sunday]" type="checkbox" value="Sun" <?php checked('Sun', $data['sunday']); ?> /> <label for="djwp_images[sunday]">Sunday
+                </td>
+                <td><input type="text" name="djwp_images[<?php echo $image; ?>][start_time]" value="<?php echo $data['start_time']; ?>" class="small-text" />
+                <p><span class="description"><?php _e( '24-hour time only <code>15:00</code>', 'djwp' ); ?></span></p>
+                </td>
+                <td><input type="text" name="djwp_images[<?php echo $image; ?>][end_time]" value="<?php echo $data['end_time']; ?>" class="small-text" />
+                <p><span class="description"><?php _e( '24-hour time only <code>19:00</code>', 'djwp' ); ?></span></p>
+                </td>
 				<td class="column-slug"><input type="submit" class="button-primary" value="Update" /> <a href="?page=dj-rotator&amp;delete=<?php echo $image; ?>" class="button">Delete</a></td>
 			</tr>
 		<?php endforeach; ?>
@@ -316,14 +325,14 @@ function djwp_settings_admin() { ?>
         	<tr valign="top">
             	<th scope="row"><?php _e( 'Module Name', 'djwp' ); ?></th>
 				<td>                
-                <input type="text" name="djwp_settings[header_text]" value="<?php echo $options['header_text'] ?>" />
+                <input type="text" name="djwp_settings[header_text]" value="<?php echo $options['header_text'] ?>" class="regular-text" />
                 <p><span class="description"><?php _e( 'Give the module a name. Default: <code>On-Air Now</code>', 'djwp' ); ?></span></p>
                 </td>
         </tr>		
 		<input type="hidden" name="djwp_settings[update]" value="UPDATED" />	
 	</table>
 
-    <h3>Photo Dimensions</h3>
+    <h3>Image Dimensions</h3>
     <table class="form-table">	
     	<tbody>
 			<tr valign="top">
@@ -343,28 +352,28 @@ function djwp_settings_admin() { ?>
 			<tr valign="top">
             	<th scope="row"><?php _e( 'Main DIV ID', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="djwp_settings[div]" value="<?php echo $options['div'] ?>" />
+            		<input type="text" name="djwp_settings[div]" value="<?php echo $options['div'] ?>" class="regular-text code" />
                     <p><span class="description"><?php _e( 'Set the CSS <code>ID</code> of the module. Default: <code>dj-rotator</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
             <tr valign="top">
             	<th scope="row"><?php _e( 'Header Class', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="djwp_settings[header_class]" value="<?php echo $options['header_class'] ?>" />
+            		<input type="text" name="djwp_settings[header_class]" value="<?php echo $options['header_class'] ?>" class="regular-text code" />
                     <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the <code>&lt;h3&gt;</code>. Default: <code>dj-header</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
 			<tr valign="top">
             	<th scope="row"><?php _e( 'Image Class', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="djwp_settings[image_class]" value="<?php echo $options['image_class'] ?>" />
+            		<input type="text" name="djwp_settings[image_class]" value="<?php echo $options['image_class'] ?>" class="regular-text code" />
                     <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the photo. Default: <code>dj-image</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
             <tr valign="top">
             	<th scope="row"><?php _e( 'Description Class', 'djwp' ); ?></th>
 				<td>            		
-            		<input type="text" name="djwp_settings[desc_class]" value="<?php echo $options['desc_class'] ?>" />
+            		<input type="text" name="djwp_settings[desc_class]" value="<?php echo $options['desc_class'] ?>" class="regular-text code" />
                     <p><span class="description"><?php _e( 'Set the CSS <code>class</code> of the description. Default: <code>dj-desc</code>', 'djwp' ); ?></span></p>
                 </td>
         	</tr>
@@ -413,13 +422,13 @@ function djwp_settings_admin() { ?>
 					<option value="Pacific/Fiji" <?php selected('Pacific/Fiji', $options['time_zone']); ?>>(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
                     <option value="Pacific/Tongatapu" <?php selected('Pacific/Tongatapu', $options['time_zone']); ?>>(GMT +13:00) Tongatapu</option>
 				</select>            
-                <p><span class="description"><?php _e('This is required to ensure Deejay\'s will show up according to your timezone. Default: <code>Central Time (US &amp; Canada)</code>', 'djwp'); ?></span></p>
+                <p><span class="description"><?php _e( 'This is required to ensure Deejay\'s will show up according to your timezone. Default: <code>Central Time (US &amp; Canada)</code>', 'djwp' ); ?></span></p>
                 </td>
         </tr>		
 		<input type="hidden" name="djwp_settings[update]" value="UPDATED" />	
 	</table>
 	<p class="submit">
-	<input type="submit" class="button-primary" value="<?php _e('Save Settings') ?>" />
+	<input type="submit" class="button-primary" value="<?php _e( 'Save DJ Settings' ) ?>" />
 	</form>
 	
 	<!-- The Reset Option -->
@@ -430,12 +439,12 @@ function djwp_settings_admin() { ?>
 	<input type="hidden" name="djwp_settings[<?php echo $key; ?>]" value="<?php echo $value; ?>" />
 	<?php endforeach; ?>
 	<input type="hidden" name="djwp_settings[update]" value="RESET" />
-	<input type="submit"  class="button-highlighted" value="<?php _e( 'Reset Settings' ) ?>" />
+	<input type="submit"  class="button-highlighted" value="<?php _e( 'Reset DJ Settings' ) ?>" />
 	</form>
 	<!-- End Reset Option -->
 	</p>
     &nbsp; &nbsp;
-    <p><span class="description"><?php _e('Blah Blah Blah a brief FAQ', 'djwp'); ?></span></p>
+    <p><span class="description"><?php _e( 'Blah Blah Blah a brief FAQ', 'djwp' ); ?></span></p>
 
 <?php
 }
@@ -481,27 +490,27 @@ function djwp_images_validate($input) {
  *
  */
 function djwp_before_header() {
-	do_action('djwp_before_header');
+	do_action( 'djwp_before_header' );
 }
 
 function djwp_after_header() {
-	do_action('djwp_after_header');
+	do_action( 'djwp_after_header' );
 }
 
 function djwp_before_image() {
-	do_action('djwp_before_image');
+	do_action( 'djwp_before_image' );
 }
 
 function djwp_after_image() {
-	do_action('djwp_after_image');
+	do_action( 'djwp_after_image' );
 }
 
 function djwp_before_description() {
-	do_action('djwp_before_description');
+	do_action( 'djwp_before_description' );
 }
 
 function djwp_after_description() {
-	do_action('djwp_after_description');
+	do_action( 'djwp_after_description' );
 }
 
 
@@ -527,17 +536,29 @@ function djwp_image() {
 	global $djwp_settings, $djwp_images;
 	
 	// set the timezone
-	if(function_exists('date_default_timezone_set'))
+	if(function_exists( 'date_default_timezone_set' ))
 		date_default_timezone_set($djwp_settings['time_zone']); 
 	
 	// get current server time
-	$dae = date( 'w' );
-	$now = date( 'Hi' ); 
+	$djday = date( 'D' );
+	$djnow = date( 'h:i' ); 
 	
 	djwp_before_image();
 		foreach((array)$djwp_images as $image => $data) {
-			if($data['days'] == $dae && $data['start_time'] <= $now && $data['end_time'] >= $now)
-				echo "\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+			
+			if
+			($data['monday'] === $djday ||
+			$data['tuesday'] === $djday ||
+			$data['wednesday'] === $djday ||
+			$data['thursday'] === $djday ||
+			$data['friday'] === $djday ||
+			$data['saturday'] === $djday ||
+			$data['sunday'] === $djday)
+			
+			if
+			($data['start_time'] <= $djnow && $data['end_time'] >= $djnow)
+
+			echo "\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
 		
 		}
 	djwp_after_image();
@@ -551,10 +572,35 @@ function djwp_image() {
  */
 function djwp_description() {
 	global $djwp_settings, $djwp_images;
+	
+	// set the timezone
+	if(function_exists( 'date_default_timezone_set' ))
+		date_default_timezone_set($djwp_settings['time_zone']); 
+	
+	// get current server time
+	$djday = date( 'D' );
+	$djnow = date( 'h:i' ); 
+	
+	djwp_before_image();
+		foreach((array)$djwp_images as $image => $data) {
+			
+			if
+			($data['monday'] === $djday ||
+			$data['tuesday'] === $djday ||
+			$data['wednesday'] === $djday ||
+			$data['thursday'] === $djday ||
+			$data['friday'] === $djday ||
+			$data['saturday'] === $djday ||
+			$data['sunday'] === $djday)
+			
+			if
+			($data['start_time'] <= $djnow && $data['end_time'] >= $djnow)
+					
 	djwp_before_description();
-		echo "\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$djwp_images['desc'].'</p>' . "\n";
+		echo "\t\t\t" .'<p class="'.$data['desc_class'].'">'.$data['desc'].'</p>' . "\n";
 	djwp_after_description();
 	
+		}
 }
 
 
