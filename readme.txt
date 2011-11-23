@@ -10,6 +10,8 @@ Step 3. Place the DJ Rotator in your theme by using the template tag <?php drwp(
 You may customize the CSS using your theme's style.css or custom.css. You can also take advantage of several
 hooks built into this plugin to extended functionality.
 
+Hooks:
+
 djwp_before_header
 djwp_after_header
 djwp_before_image
@@ -38,3 +40,10 @@ Version 0.0.2 – November 18th 2011
 
 Version 0.0.1 – November 16th 2011
 - Initial build
+
+######################################
+To-Do
+
+- Add Widget
+- Add target="_blank" to DJ Links
+- Add different languages
