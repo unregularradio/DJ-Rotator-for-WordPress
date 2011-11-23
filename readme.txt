@@ -26,6 +26,9 @@ http://1049thegump.com
 ######################################
 Change Log
 
+Version 0.0.3 - November 23 2011
+- HTML optimizations
+
 Version 0.0.2 – November 18th 2011
 - Added hooks
 - Added header class
