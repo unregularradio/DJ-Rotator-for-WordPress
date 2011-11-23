@@ -4,7 +4,7 @@ Plugin Name: DJ Rotator for WordPress
 Plugin URI: http://gregrickaby.com/go/dj-rotator-for-wordpress
 Description: Easily create a Deejay Rotator to display which personality is currently on-air. You can upload/delete deejays via the options panel. <strong>Display the DJ Rotator by using either the <code>djwp();</code> template tag or a <code>[djwp]</code> shortcode in your theme.</strong>
 Author: Greg Rickaby
-Version: 0.0.2
+Version: 0.0.3
 Author URI: http://gregrickaby.com
 Notes: Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction. I love open-source and the GPL.
 */
@@ -521,14 +521,14 @@ function djwp_after_description() {
  */
 function djwp_header() {
 	global $djwp_settings;
-	djwp_before_header();
-		echo "\t\t" .'<h3 class="'.$djwp_settings['header_class'].'">'.$djwp_settings['header_text'].'</h3>' . "\n"; 
-	djwp_after_header();
+	djwp_before_header(); #hook
+		echo "\t\t\t\t\t" .'<h3 class="'.$djwp_settings['header_class'].'">'.$djwp_settings['header_text'].'</h3>' . "\n"; 
+	djwp_after_header(); #hook
 }
 
 
 /**
- * Generates the dj image
+ * Generates the DJ image
  * @since 0.0.2
  *
  */
@@ -541,32 +541,41 @@ function djwp_image() {
 	
 	// get current server time
 	$djday = date( 'D' );
-	$djnow = date( 'h:i' ); 
+	$djnow = date( 'H:i' ); 
 	
-	djwp_before_image();
+	djwp_before_image(); #hook
+	
 		foreach((array)$djwp_images as $image => $data) {
 			
-			if
-			($data['monday'] === $djday ||
-			$data['tuesday'] === $djday ||
-			$data['wednesday'] === $djday ||
-			$data['thursday'] === $djday ||
-			$data['friday'] === $djday ||
-			$data['saturday'] === $djday ||
-			$data['sunday'] === $djday)
-			
-			if
-			($data['start_time'] <= $djnow && $data['end_time'] >= $djnow)
+			if($djday === $data['monday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+							
+			if($djday === $data['tuesday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n";
 
-			echo "\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
-		
+			if($djday === $data['wednesday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+							
+			if($djday === $data['thursday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+							
+			if($djday === $data['friday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+							
+			if($djday === $data['saturday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
+
+			if($djday === $data['sunday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n";
+ 		
 		}
-	djwp_after_image();
+		
+		djwp_after_image(); #hook
 }
 
 
 /**
- * Generates the dj description
+ * Generates the DJ description
  * @since 0.0.2
  *
  */
@@ -579,30 +588,38 @@ function djwp_description() {
 	
 	// get current server time
 	$djday = date( 'D' );
-	$djnow = date( 'h:i' ); 
+	$djnow = date( 'H:i' ); 
+
+	djwp_before_description(); #hook
 	
-	djwp_before_image();
 		foreach((array)$djwp_images as $image => $data) {
 			
-			if
-			($data['monday'] === $djday ||
-			$data['tuesday'] === $djday ||
-			$data['wednesday'] === $djday ||
-			$data['thursday'] === $djday ||
-			$data['friday'] === $djday ||
-			$data['saturday'] === $djday ||
-			$data['sunday'] === $djday)
-			
-			if
-			($data['start_time'] <= $djnow && $data['end_time'] >= $djnow)
-					
-	djwp_before_description();
-		echo "\t\t\t" .'<p class="'.$data['desc_class'].'">'.$data['desc'].'</p>' . "\n";
-	djwp_after_description();
-	
-		}
-}
+			if($djday === $data['monday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$data['desc'].'</p>' . "\n";
+							
+			if($djday === $data['tuesday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$data['desc'].'</p>' . "\n";
 
+			if($djday === $data['wednesday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$data['desc'].'</p>' . "\n";
+							
+			if($djday === $data['thursday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$data['desc'].'</p>' . "\n";
+							
+			if($djday === $data['friday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$data['desc'].'</p>' . "\n";
+							
+			if($djday === $data['saturday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class="'.$djwp_settings['desc_class'].'">'.$data['desc'].'</p>' . "\n";
+
+			if($djday === $data['sunday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
+							echo "\t\t\t\t\t" .'<p class=\"'.$djwp_settings['desc_class'].'\">'.$data['desc'].'</p>' . "\n";
+
+		}
+	
+	djwp_after_description(); #hook
+
+}
 
 /**
  * Mash it all together and form our primary function
@@ -615,7 +632,7 @@ function djwp($args = array(), $content = null) {
 		djwp_header();
 		djwp_image();
 		djwp_description();
-	echo "\t" .'</div>' . "\n";
+	echo "\t\t\t\t" .'</div>' . "\n";
 }
 
 
