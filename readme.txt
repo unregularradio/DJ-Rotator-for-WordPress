@@ -1,7 +1,7 @@
 DJ ROTATOR FOR WORDPRESS
 
 ######################################
-Requirements, Installation, Usage, CSS and Hooks
+Requirements, Installation, Usage, CSS and Action Hooks
 
 Requirements:
 Wordpress 3.0+
@@ -25,7 +25,7 @@ CSS:
 Use the options panel to set your custom CSS ID's and Classes. Then, customize
 the look of this plugin using your theme's style.css or custom.css.
 
-Hooks:
+Action Hooks:
 You can also take advantage of several hooks built into this plugin to
 extended functionality.
 
@@ -40,7 +40,7 @@ djwp_after_description
 Example Usage:
 
 http://bamacountry.com
-http://1049thegump.com
+http://newstalk1079.com
 
 ######################################
 Change Log
@@ -67,3 +67,18 @@ To-Do
 
 - Add target="_blank" to DJ Links
 - Add different languages
+
+######################################
+FAQ
+
+Q. What is "24-hour time"?
+A. Military time, or "24-hour clock". (http://en.wikipedia.org/wiki/24-hour_clock)
+
+Q. What does "use leading zero's mean"?
+A. DJ Rotator needs a two-digit hour and two-digit minute. Example, all times from Midnight to 10AM require a zero first. For example: 6AM = 06:00 or 9AM = 09:00. all times after 10AM don't require a zero. Example: 15:00. 
+
+Q. Can I use minutes?
+A. Absolutely! 3:30 = 15:30 etc...
+
+Q.Can I use HTML in the description field?
+A. No, use a Action Hook instead (http://codex.wordpress.org/Plugin_API#Actions)
