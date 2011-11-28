@@ -3,7 +3,7 @@ DJ ROTATOR FOR WORDPRESS
 ######################################
 Requirements, Installation, Usage, CSS and Hooks
 
-Requrements:
+Requirements:
 Wordpress 3.0+
 PHP 5.1
 
