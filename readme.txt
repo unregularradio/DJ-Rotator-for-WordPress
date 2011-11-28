@@ -75,10 +75,10 @@ Q. What is "24-hour time"?
 A. Military time, or "24-hour clock". (http://en.wikipedia.org/wiki/24-hour_clock)
 
 Q. What does "use leading zero's mean"?
-A. DJ Rotator needs a two-digit hour and two-digit minute. Example, all times from Midnight to 10AM require a zero first. For example: 6AM = 06:00 or 9AM = 09:00. all times after 10AM don't require a zero. Example: 15:00. 
+A. DJ Rotator needs a two-digit hour and two-digit minute. All times from Midnight to 10AM require a zero first. For example: 6AM = 06:00 or 9AM = 09:00. all times after 10AM don't require a zero. Example: 15:00. 
 
 Q. Can I use minutes?
 A. Absolutely! 3:30 = 15:30 etc...
 
-Q.Can I use HTML in the description field?
+Q. Can I use HTML in the description field?
 A. No, use a Action Hook instead (http://codex.wordpress.org/Plugin_API#Actions)
