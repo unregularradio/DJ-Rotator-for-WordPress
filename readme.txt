@@ -11,6 +11,9 @@ Installation:
 
 Step 1. Install the plugin using the plugin manager in WordPress
 Step 2. Visit Settings --> DJ Rotator to configure
+Step 3. Upload the DJ Image
+Step 4. Enter a description, link, days, start and end time (24-hour time WITH LEADING ZEROS e.g.; 06:00)
+Step 5. Click update and save
 
 Usage:
 To display the DJ Rotator in your theme, use one of the following:
