@@ -19,7 +19,7 @@ To display the DJ Rotator in your theme, use one of the following:
  3. Shortcode: [djwp]
 
 CSS:
-JUse the options panel to set your custom CSS ID's and Classes. Then, customize
+Use the options panel to set your custom CSS ID's and Classes. Then, customize
 the look of this plugin using your theme's style.css or custom.css.
 
 Hooks:
