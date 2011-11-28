@@ -2,12 +2,34 @@
 /*
 Plugin Name: DJ Rotator for WordPress
 Plugin URI: http://gregrickaby.com/go/dj-rotator-for-wordpress
-Description: Easily create a Deejay Rotator to display which personality is currently on-air. You can upload/delete deejays via the options panel. <strong>Display the DJ Rotator by using either the <code>djwp();</code> template tag or a <code>[djwp]</code> shortcode in your theme.</strong>
+Description: Easily create a DJ Rotator to display which personality is currently on-air. You can upload/delete deejays via the <a href="options-general.php?page=dj-rotator">options panel</a>. To display the DJ Rotator in your theme, use one of the following: 1) <a href="widgets.php">Widget</a>, 2) Template Tag <code>&lt;?php djwp(); ?&gt;</code>, or 3) Shortcode <code>[djwp]</code>.
 Author: Greg Rickaby
-Version: 0.0.3
+Version: 0.0.4
 Author URI: http://gregrickaby.com
-Notes: Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction. I love open-source and the GPL.
+Notes: Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction.
+Copyright 2011 Greg Rickaby (gregrickaby@gmail.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as 
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 */
+
+/**
+ * Check PHP Version
+ * @since 0.0.4
+ */
+if (version_compare(PHP_VERSION, '5.1.0', '<'))
+	die( 'DJ Rotator requires at least PHP 5.1. Your server currently has version '. PHP_VERSION .' installed' );
 
 
 /**
@@ -444,7 +466,7 @@ function djwp_settings_admin() { ?>
 	<!-- End Reset Option -->
 	</p>
     &nbsp; &nbsp;
-    <p><span class="description"><?php _e( 'Blah Blah Blah a brief FAQ', 'djwp' ); ?></span></p>
+    <p><span class="description"><?php _e( 'To display the DJ Rotator in your theme, use one of the following: 1) <a href="widgets.php">Widget</a>, 2) Template Tag <code>&lt;?php djwp(); ?&gt;</code>, or 3) Shortcode <code>[djwp]</code>&nbsp; &nbsp;For support visit <a href="http://gregrickaby.com/go/dj-rotator-for-wordpress" target="_blank">http://gregrickaby.com/</a>', 'djwp' ); ?></span></p>
 
 <?php
 }
@@ -522,7 +544,7 @@ function djwp_after_description() {
 function djwp_header() {
 	global $djwp_settings;
 	djwp_before_header(); #hook
-		echo "\t\t\t\t\t" .'<h3 class="'.$djwp_settings['header_class'].'">'.$djwp_settings['header_text'].'</h3>' . "\n"; 
+		echo "\t\t\t\t\t" .'<h3 class="widget-title '.$djwp_settings['header_class'].'">'.$djwp_settings['header_text'].'</h3>' . "\n"; 
 	djwp_after_header(); #hook
 }
 
@@ -646,4 +668,24 @@ function djwp_shortcode($atts) {
 	ob_start();
 		djwp();
 	return ob_get_clean();			
+}
+
+
+/**
+ * Create the Widget
+ * @since 0.0.4
+ *
+ */
+add_action( 'widgets_init', create_function( '', 'register_widget("DJ_Rotator_Widget");' ) );
+class DJ_Rotator_Widget extends WP_Widget {
+	// construct the widget
+	function __construct() {
+		parent::WP_Widget( 'dj_rotator_widget', 'DJ Rotator', array( 'description' => 'Use this widget to place the DJ Rotator in your Sidebar(s)' ) );
+	}
+
+	// write the widget
+	function widget() {
+			djwp();
+	}
+
 }
