@@ -2,7 +2,7 @@
 Contributors: gregrickaby
 Tags: dj,music,radio,scheduling,on air,broadcasting
 Requires at least: 3.0.0
-Tested up to: 3.3.4
+Tested up to: 3.4
 Stable tag: 0.0.5
 
 Easily create a DJ Rotator to display which personality is currently on-air.
