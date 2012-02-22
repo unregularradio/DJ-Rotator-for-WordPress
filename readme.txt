@@ -3,9 +3,9 @@ Contributors: gregrickaby
 Tags: dj,music,radio,scheduling,on air,broadcasting
 Requires at least: 3.0.0
 Tested up to: 3.4
-Stable tag: 0.0.5
+Stable tag: 0.0.6
 
-Easily create a DJ Rotator to display which personality is currently on-air.
+Easily create a DJ Rotator to display on-air personalities.
 
 == Description ==
 
@@ -85,6 +85,10 @@ Yes. You can also use an [Action Hook](http://codex.wordpress.org/Plugin_API#Act
 3. Default Layout in a Sidebar (Right-click --> New Tab for larger image)
 
 == Changelog ==
+
+= 0.0.6 - 2.22.12 =
+* Added ALT and TITLE tags to images
+* Added ability to open link in new window
 
 = 0.0.5 - 12.09.11 =
 * Added Widget title

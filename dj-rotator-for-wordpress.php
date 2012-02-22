@@ -4,7 +4,7 @@ Plugin Name: DJ Rotator for WordPress
 Plugin URI: http://gregrickaby.com/go/dj-rotator-for-wordpress
 Description: Easily create a DJ Rotator to display which personality is currently on-air. You can upload/delete deejays via the <a href="options-general.php?page=dj-rotator">options panel</a>. To display the DJ Rotator in your theme, use one of the following: 1) <a href="widgets.php">Widget</a>, 2) Template Tag <code>&lt;?php djwp(); ?&gt;</code>, or 3) Shortcode <code>[djwp]</code>.
 Author: Greg Rickaby
-Version: 0.0.5
+Version: 0.0.6
 Author URI: http://gregrickaby.com
 Notes: Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction.
 Copyright 2011 Greg Rickaby (gregrickaby@gmail.com)
@@ -26,7 +26,9 @@ Copyright 2011 Greg Rickaby (gregrickaby@gmail.com)
 
 /**
  * Check PHP Version
- * @since 0.0.4
+ *
+ * @author Greg Rickaby
+ * @since 0.0.1
  */
 if (version_compare(PHP_VERSION, '5.1.0', '<'))
 	die( 'DJ Rotator requires at least PHP 5.1. Your server currently has version '. PHP_VERSION .' installed' );
@@ -34,6 +36,8 @@ if (version_compare(PHP_VERSION, '5.1.0', '<'))
 
 /**
  * Defines the default variables that will be used throughout the plugin
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 $djwp_defaults = apply_filters( 'djwp_defaults', array(
@@ -50,6 +54,8 @@ $djwp_defaults = apply_filters( 'djwp_defaults', array(
 
 /**
  * Pull the settings from the DB
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 $djwp_settings = get_option( 'djwp_settings' );
@@ -60,6 +66,8 @@ $djwp_settings = wp_parse_args($djwp_settings, $djwp_defaults);
 /**
  * The following section registers settings, adds a link to the options page, and a link
  * on the plugin page to "settings"
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 add_action( 'admin_init', 'djwp_register_settings' );
@@ -84,6 +92,8 @@ function djwp_plugin_action_links($links) {
 /**
  * This function is the code that gets loaded when the settings page gets loaded by the browser.
  * It calls functions that handle image uploads and image settings changes, as well as producing the visible page output.
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 function djwp_admin_page() {
@@ -108,7 +118,9 @@ function djwp_admin_page() {
 
 
 /**
- * this section handles uploading images, addingthe image data to the database, deleting images, and deleting image data from the database.
+ * This section handles uploading images, addingthe image data to the database, deleting images, and deleting image data from the database.
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 function djwp_handle_upload() {
@@ -200,6 +212,8 @@ function djwp_delete_upload($id) {
 /**
  * These two functions check to see if an update to the data just occurred. if it did, then they
  * will display a notice, and reset the update option.
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 function djwp_images_update_check() {
@@ -224,6 +238,8 @@ function djwp_settings_update_check() {
 
 /**
  * Display the DJ image settings on the options page
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 function djwp_images_admin() { ?>
@@ -309,8 +325,9 @@ function djwp_images_admin() { ?>
 			</td>
 
 			<td>
-				<input type="text" name="djwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="7" />
-				<p><span class="description"><?php _e( 'http://www.boortz.com', 'djwp' ); ?></span></p>
+				<input type="text" name="djwp_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="11" />
+				<p><span class="description"><?php _e( 'http://boortz.com', 'djwp' ); ?></span></p>
+                <input name="djwp_images[<?php echo $image; ?>][_blank]" type="checkbox" value="_blank" <?php checked('_blank', $data['_blank']); ?> /> <label for="djwp_images[_blank]">Open link in new window?<br />
 			</td>
 
 			<td>
@@ -348,6 +365,8 @@ function djwp_images_admin() { ?>
 
 /**
  * Display the DJ settings on the options page
+ *
+ * @author Greg Rickaby
  * @since 0.0.1
  */
 function djwp_settings_admin() { ?>
@@ -490,8 +509,9 @@ function djwp_settings_admin() { ?>
 
 /**
  * These two functions sanitize the data before it gets stored in the database via options.php
- * @since 0.0.1
  *
+ * @author Greg Rickaby
+ * @since 0.0.1
  */
 
 // sanitizes our settings data for storage
@@ -526,8 +546,9 @@ function djwp_images_validate($input) {
 
 /**
  * Generates all hook wrappers
- * @since 0.0.2
  *
+ * @author Greg Rickaby
+ * @since 0.0.2
  */
 function djwp_before_header() {
 	do_action( 'djwp_before_header' );
@@ -556,8 +577,9 @@ function djwp_after_description() {
 
 /**
  * Generates the <h3>MODULE NAME</h3> area 
- * @since 0.0.2
  *
+ * @author Greg Rickaby
+ * @since 0.0.2
  */
 function djwp_header() {
 	global $djwp_settings;
@@ -569,15 +591,16 @@ function djwp_header() {
 
 /**
  * Generates the DJ image
- * @since 0.0.2
  *
+ * @author Greg Rickaby
+ * @since 0.0.2
  */
 function djwp_image() {
 	global $djwp_settings, $djwp_images;
 	
 	// set the timezone
 	if(function_exists( 'date_default_timezone_set' ))
-		date_default_timezone_set($djwp_settings['time_zone']); 
+		date_default_timezone_set($djwp_settings['time_zone']);
 	
 	// get current server time
 	$djday = date( 'D' );
@@ -588,25 +611,25 @@ function djwp_image() {
 		foreach((array)$djwp_images as $image => $data) {
 			
 			if($djday === $data['monday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n"; 
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'" target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
 
 			if($djday === $data['tuesday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n";
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'" target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n";
 
 			if($djday === $data['wednesday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n"; 
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'" target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'"/></a>' . "\n"; 
 
 			if($djday === $data['thursday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n"; 
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'" target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
 
 			if($djday === $data['friday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n"; 
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'" target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
 
 			if($djday === $data['saturday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n"; 
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'" target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n"; 
 
 			if($djday === $data['sunday'] && $djnow >= $data['start_time'] && $djnow <= $data['end_time'])
-				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" /></a>' . "\n";
+				echo "\t\t\t\t\t" .'<a href="'.$data['image_links_to'].' " target="'.$data['_blank'].'"><img class="'.$djwp_settings['image_class'].' '.$data['id'].'" src="'.$data['file_url'].'" width="'.$djwp_settings['img_width'].'" height="'.$djwp_settings['img_height'].'" alt="'.$data['desc'].'" title="'.$data['desc'].'" /></a>' . "\n";
 
 		}
 		
@@ -616,8 +639,9 @@ function djwp_image() {
 
 /**
  * Generates the DJ description
- * @since 0.0.2
  *
+ * @author Greg Rickaby
+ * @since 0.0.2
  */
 function djwp_description() {
 	global $djwp_settings, $djwp_images;
@@ -664,8 +688,9 @@ function djwp_description() {
 
 /**
  * Mash it all together and form our primary function (Template Tag & Shortcode)
- * @since 0.0.1
  *
+ * @author Greg Rickaby
+ * @since 0.0.1
  */
 function djwp($args = array(), $content = null) {
 	global $djwp_settings;
@@ -679,8 +704,9 @@ function djwp($args = array(), $content = null) {
 
 /**
  * Mash it all together and form our primary function (Sidebar Widget)
- * @since 0.0.5
  *
+ * @author Greg Rickaby
+ * @since 0.0.1
  */
 function djwp_widget($args = array(), $content = null) {
 	global $djwp_settings;	
@@ -689,12 +715,13 @@ function djwp_widget($args = array(), $content = null) {
 }
 
 
+add_shortcode( 'djwp', 'djwp_shortcode' );
 /**
  * Create the shortcode [djwp]
- * @since 0.0.1
  *
+ * @author Greg Rickaby
+ * @since 0.0.1
  */
-add_shortcode( 'djwp', 'djwp_shortcode' );
 function djwp_shortcode($atts) {		
 	ob_start();
 		djwp();
@@ -702,12 +729,13 @@ function djwp_shortcode($atts) {
 }
 
 
+add_action( 'widgets_init', create_function( '', 'register_widget("DJ_Rotator_Widget");' ) );
 /**
  * Create the Widget
- * @since 0.0.4
  *
+ * @author Greg Rickaby
+ * @since 0.0.4
  */
-add_action( 'widgets_init', create_function( '', 'register_widget("DJ_Rotator_Widget");' ) );
 class DJ_Rotator_Widget extends WP_Widget {
 	// construct the widget
 	function __construct() {
