@@ -4,7 +4,7 @@ Plugin Name: DJ Rotator for WordPress
 Plugin URI: http://gregrickaby.com/go/dj-rotator-for-wordpress
 Description: Easily create a DJ Rotator to display which personality is currently on-air. You can upload/delete deejays via the <a href="options-general.php?page=dj-rotator">options panel</a>. To display the DJ Rotator in your theme, use one of the following: 1) <a href="widgets.php">Widget</a>, 2) Template Tag <code>&lt;?php djwp(); ?&gt;</code>, or 3) Shortcode <code>[djwp]</code>.
 Author: Greg Rickaby
-Version: 0.0.7
+Version: 0.0.6
 Author URI: http://gregrickaby.com
 Notes: Big thanks to Nathan Rice and his WP-Cycle Plugin which got me started in the right direction.
 Copyright 2011 Greg Rickaby (gregrickaby@gmail.com)
@@ -78,7 +78,7 @@ function djwp_register_settings() {
 
 add_action( 'admin_menu', 'add_djwp_menu' );
 function add_djwp_menu() {
-		add_submenu_page( 'options-general.php', 'DJ Roator', 'DJ Rotator', 'manage_options', 'dj-rotator', 'djwp_admin_page' );
+		add_submenu_page( 'options-general.php', 'DJ Roator', 'DJ Rotator', 8, 'dj-rotator', 'djwp_admin_page' );
 }
 
 add_filter( 'plugin_action_links_' . plugin_basename(__FILE__) , 'djwp_plugin_action_links' );
