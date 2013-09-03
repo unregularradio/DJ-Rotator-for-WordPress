@@ -83,6 +83,9 @@ Yes. You can also use an [Action Hook](http://codex.wordpress.org/Plugin_API#Act
 
 == Changelog ==
 
+= 0.0.9 - 2013-09-02 =
+* Major issues. Revert to v0.0.7
+
 = 0.0.8 - 2013-09-02 =
 * Added check for GD Library
 * Fixed Reset Options bug
